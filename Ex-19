@@ -1,0 +1,34 @@
+from sklearn.naive_bayes import CategoricalNB
+from sklearn.preprocessing import OrdinalEncoder
+
+bank = pd.DataFrame({
+    "income":["High","Medium","Low","High","Low","Medium","High","Medium","Low","High","Medium","Low"],
+    "employment":["Stable","Stable","Unstable","Stable","Unstable","Stable","Unstable","Stable","Stable","Stable","Unstable","Unstable"],
+    "credit_history":["Good","Good","Poor","Good","Poor","Good","Poor","Good","Good","Poor","Poor","Poor"],
+    "loan_approved":["Yes","Yes","No","Yes","No","Yes","No","Yes","Yes","No","No","No"]
+})
+
+X = bank.drop(columns="loan_approved")
+
+y = (bank["loan_approved"] == "Yes").astype(int)
+
+enc = OrdinalEncoder()
+
+Xe = enc.fit_transform(X)
+
+model = CategoricalNB()
+
+model.fit(Xe,y)
+
+new = pd.DataFrame(
+    [["Medium","Stable","Good"]],
+    columns=X.columns
+)
+
+print("Training Accuracy:", model.score(Xe,y))
+
+prediction = model.predict(enc.transform(new))
+
+print("New Applicant Decision:",
+      "Approved" if prediction[0] == 1
+      else "Rejected")
