@@ -1,0 +1,47 @@
+from sklearn.linear_model import LinearRegression
+
+months = np.arange(1,25).reshape(-1,1)
+
+rng = np.random.default_rng(5)
+
+sales = 100 + 8*months.ravel() + rng.normal(0,8,24)
+
+model = LinearRegression()
+
+model.fit(months,sales)
+
+future_months = np.arange(25,31).reshape(-1,1)
+
+future_sales = model.predict(future_months)
+
+print("Trend Model R2:",
+      model.score(months,sales))
+
+print("Predicted Sales for Next Six Months:")
+
+for month,value in zip(range(25,31),future_sales):
+    print("Month",month,":",round(value,2),"units")
+
+plt.figure(figsize=(7,3))
+
+plt.scatter(months,sales,label="Historical Sales")
+
+plt.plot(
+    months,
+    model.predict(months),
+    label="Fitted Trend"
+)
+
+plt.plot(
+    future_months,
+    future_sales,
+    "o--",
+    label="Future Forecast"
+)
+
+plt.xlabel("Month")
+plt.ylabel("Sales")
+plt.title("Future Sales Prediction")
+
+plt.legend()
+plt.show()
