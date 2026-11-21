@@ -1,0 +1,40 @@
+from sklearn.ensemble import RandomForestClassifier
+
+credit = pd.DataFrame({
+    "income":[25,30,45,60,80,22,55,90,35,70,28,100,48,65,40,85],
+    "debt_ratio":[0.65,0.55,0.35,0.25,0.18,0.75,0.30,0.15,0.60,0.22,0.70,0.12,0.40,0.28,0.50,0.16],
+    "late_payments":[4,3,1,0,0,5,1,0,3,0,4,0,2,1,2,0],
+    "creditworthy":[0,0,1,1,1,0,1,1,0,1,0,1,0,1,0,1]
+})
+
+X = credit.drop(columns="creditworthy")
+y = credit["creditworthy"]
+
+Xtr,Xte,ytr,yte = train_test_split(
+    X,y,
+    test_size=0.25,
+    random_state=7,
+    stratify=y
+)
+
+clf = RandomForestClassifier(
+    n_estimators=100,
+    random_state=7
+)
+
+clf.fit(Xtr,ytr)
+
+p = clf.predict(Xte)
+
+print("Accuracy:", accuracy_score(yte,p))
+
+new_applicant = pd.DataFrame(
+    [[50,0.30,1]],
+    columns=X.columns
+)
+
+prediction = clf.predict(new_applicant)
+
+print("New Applicant:",
+      "Creditworthy" if prediction[0] == 1
+      else "Not Creditworthy")
