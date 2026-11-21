@@ -1,0 +1,35 @@
+from sklearn.datasets import load_iris
+from sklearn.linear_model import Perceptron
+
+iris = load_iris()
+
+X = iris.data
+
+y = (iris.target == 0).astype(int)
+
+Xtr,Xte,ytr,yte = train_test_split(
+    X,y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+
+sc = StandardScaler()
+
+Xtr = sc.fit_transform(Xtr)
+Xte = sc.transform(Xte)
+
+p = Perceptron(
+    max_iter=1000,
+    random_state=42
+)
+
+p.fit(Xtr,ytr)
+
+pred = p.predict(Xte)
+
+print("Perceptron Accuracy:",
+      accuracy_score(yte,pred))
+
+print("1 = Setosa")
+print("0 = Non-Setosa")
