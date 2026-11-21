@@ -1,0 +1,27 @@
+from sklearn.mixture import GaussianMixture
+from sklearn.datasets import make_blobs
+
+X,_ = make_blobs(
+    n_samples=200,
+    centers=3,
+    cluster_std=1.0,
+    random_state=42
+)
+
+em = GaussianMixture(
+    n_components=3,
+    random_state=42
+)
+
+em.fit(X)
+
+labels = em.predict(X)
+
+print("EM Converged:", em.converged_)
+
+print("Number of Iterations:", em.n_iter_)
+
+print("Cluster Counts:", np.bincount(labels))
+
+print("Estimated Component Means:")
+print(np.round(em.means_,2))
