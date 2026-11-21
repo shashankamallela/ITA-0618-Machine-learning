@@ -1,0 +1,50 @@
+from sklearn.datasets import load_breast_cancer
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+
+data = load_breast_cancer()
+
+Xtr,Xte,ytr,yte = train_test_split(
+    data.data,data.target,
+    test_size=0.25,
+    random_state=42,
+    stratify=data.target
+)
+
+sc = StandardScaler()
+
+Xtrs = sc.fit_transform(Xtr)
+Xtes = sc.transform(Xte)
+
+models = {
+    "KNN": KNeighborsClassifier(5),
+    "Naive Bayes": GaussianNB(),
+    "Decision Tree": DecisionTreeClassifier(random_state=42),
+    "Random Forest": RandomForestClassifier(n_estimators=100,random_state=42),
+    "Logistic Regression": LogisticRegression(max_iter=3000)
+}
+
+scores = {}
+
+for name,model in models.items():
+
+    if name in ["KNN","Logistic Regression"]:
+        model.fit(Xtrs,ytr)
+        pred = model.predict(Xtes)
+    else:
+        model.fit(Xtr,ytr)
+        pred = model.predict(Xte)
+
+    scores[name] = accuracy_score(yte,pred)
+
+print("Algorithm Comparison (Accuracy):")
+
+for name,score in sorted(
+    scores.items(),
+    key=lambda z:z[1],
+    reverse=True
+):
+    print(name,":",round(score,4))
