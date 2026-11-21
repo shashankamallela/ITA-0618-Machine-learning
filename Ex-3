@@ -1,0 +1,30 @@
+from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.pipeline import make_pipeline
+
+df = pd.DataFrame({
+ "Outlook":["Sunny","Sunny","Overcast","Rain","Rain","Rain","Overcast","Sunny","Sunny","Rain","Sunny","Overcast","Overcast","Rain"],
+ "Temperature":["Hot","Hot","Hot","Mild","Cool","Cool","Cool","Mild","Cool","Mild","Mild","Mild","Hot","Mild"],
+ "Humidity":["High","High","High","High","Normal","Normal","Normal","High","Normal","Normal","Normal","High","Normal","High"],
+ "Wind":["Weak","Strong","Weak","Weak","Weak","Strong","Strong","Weak","Weak","Weak","Strong","Strong","Weak","Strong"],
+ "Play":["No","No","Yes","Yes","Yes","No","Yes","No","Yes","Yes","Yes","Yes","Yes","No"]
+})
+
+X = df.drop(columns="Play")
+y = df["Play"]
+
+model = make_pipeline(
+    OrdinalEncoder(),
+    DecisionTreeClassifier(criterion="entropy", random_state=0)
+)
+
+model.fit(X,y)
+
+print(export_text(model[-1], feature_names=list(X.columns)))
+
+sample = pd.DataFrame(
+    [["Sunny","Cool","High","Strong"]],
+    columns=X.columns
+)
+
+print("New Sample Prediction:", model.predict(sample)[0])
