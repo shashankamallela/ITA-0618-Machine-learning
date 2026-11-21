@@ -1,0 +1,55 @@
+from sklearn.ensemble import RandomForestClassifier
+
+rng = np.random.default_rng(10)
+
+n = 240
+
+mobile = pd.DataFrame({
+    "ram":rng.integers(1,9,n),
+    "battery":rng.integers(2000,6000,n),
+    "camera":rng.integers(5,50,n),
+    "storage":rng.choice([32,64,128,256],n)
+})
+
+score = (
+    mobile.ram*1.8
+    + mobile.battery/1800
+    + mobile.camera/15
+    + mobile.storage/80
+)
+
+mobile["price_range"] = pd.qcut(
+    score,3,labels=[0,1,2]
+).astype(int)
+
+X = mobile.drop(columns="price_range")
+y = mobile["price_range"]
+
+Xtr,Xte,ytr,yte = train_test_split(
+    X,y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+
+model = RandomForestClassifier(
+    n_estimators=120,
+    random_state=42
+)
+
+model.fit(Xtr,ytr)
+
+pred = model.predict(Xte)
+
+print("Mobile Price Prediction Accuracy:",
+      accuracy_score(yte,pred))
+
+sample = pd.DataFrame(
+    [[8,5000,48,256]],
+    columns=X.columns
+)
+
+print("Predicted Price Range:",
+      model.predict(sample)[0])
+
+print("0 = Low, 1 = Medium, 2 = High")
