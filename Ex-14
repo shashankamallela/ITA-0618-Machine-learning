@@ -1,0 +1,31 @@
+from sklearn.linear_model import LinearRegression
+
+houses = pd.DataFrame({
+    "area":[600,750,800,900,1000,1100,1200,1300,1400,1500,1600,1800,2000,2200,2400],
+    "bedrooms":[1,1,2,2,2,2,3,3,3,3,3,3,4,4,4],
+    "age":[20,15,12,10,8,7,6,5,4,3,5,2,4,2,1]
+})
+
+houses["price_lakh"] = (
+    8 + 0.045*houses.area
+    + 1.8*houses.bedrooms
+    - 0.12*houses.age
+)
+
+X = houses[["area","bedrooms","age"]]
+y = houses["price_lakh"]
+
+reg = LinearRegression()
+
+reg.fit(X,y)
+
+print("Model R2:", reg.score(X,y))
+
+new_house = pd.DataFrame(
+    [[1200,3,5]],
+    columns=X.columns
+)
+
+print("Estimated House Price:",
+      reg.predict(new_house)[0],
+      "Lakh")
