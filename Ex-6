@@ -1,0 +1,22 @@
+from sklearn.datasets import load_iris
+from sklearn.naive_bayes import GaussianNB
+
+iris = load_iris()
+
+X_train, X_test, y_train, y_test = train_test_split(
+    iris.data, iris.target,
+    test_size=0.25,
+    random_state=42,
+    stratify=iris.target
+)
+
+nb = GaussianNB()
+
+nb.fit(X_train,y_train)
+
+pred = nb.predict(X_test)
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test,pred))
+
+print("Accuracy:", accuracy_score(y_test,pred))
